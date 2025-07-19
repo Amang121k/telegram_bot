@@ -1,4 +1,2 @@
-requests>=2.28.0
-SpeechRecognition>=3.8.1
-pyttsx3>=2.90
-PyAudio>=0.2.11 
+requests
+python-telegram-bot==13.15 
