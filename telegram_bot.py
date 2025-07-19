@@ -1,13 +1,15 @@
-import os
 import logging
 import requests
 from telegram import Update
 from telegram.ext import Application, CommandHandler, MessageHandler, ContextTypes, filters
 
 # --- CONFIG ---
-TELEGRAM_TOKEN = os.getenv("TELEGRAM_TOKEN") or "YOUR_TELEGRAM_BOT_TOKEN"
-OPENROUTER_API_KEY = os.getenv("OPENROUTER_API_KEY") or "YOUR_OPENROUTER_API_KEY"
+TELEGRAM_TOKEN = "7427332439:AAGOjlAOaSa2lzBVhUJ4uqgO9kC7MFLlkP8"
+OPENROUTER_API_KEY = "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"
 OPENROUTER_MODEL = "mistralai/mistral-7b-instruct"  # or your preferred model
+
+# --- SYSTEM PROMPT ---
+SYSTEM_PROMPT = "Short answers only."
 
 # --- LOGGING ---
 logging.basicConfig(
@@ -24,7 +26,7 @@ def ask_openrouter(prompt):
     data = {
         "model": OPENROUTER_MODEL,
         "messages": [
-            {"role": "system", "content": "तू एक होशियार, मज़ेदार, और दोस्ताना AI चैटबोट है — तेरा नाम ‘लोलू’ है। User जिस भाषा में बोले, उसी में जवाब दे।"},
+            {"role": "system", "content": SYSTEM_PROMPT},
             {"role": "user", "content": prompt}
         ]
     }
@@ -41,11 +43,22 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text("नमस्ते! मैं लोलू हूँ — आपका पर्सनल चैटबोट 🤖")
 
 async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    await update.message.reply_text("मुझसे कुछ भी पूछिए! मैं आपकी भाषा में जवाब दूँगा।")
+    await update.message.reply_text("मुझसे कुछ भी पूछिए! मैं आपकी भाषा में जवाब दूँगा।\nCommands: /weather, /joke, /shayari, /news")
 
 async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    user_message = update.message.text
-    response = ask_openrouter(user_message)
+    user_message = update.message.text.strip()
+    # Command detection for custom behavior
+    if user_message.lower().startswith("/weather"):
+        prompt = f"Weather: {user_message}"
+    elif user_message.lower().startswith("/joke"):
+        prompt = f"Joke: {user_message}"
+    elif user_message.lower().startswith("/shayari"):
+        prompt = f"Shayari: {user_message}"
+    elif user_message.lower().startswith("/news"):
+        prompt = f"News: {user_message}"
+    else:
+        prompt = user_message
+    response = ask_openrouter(prompt)
     await update.message.reply_text(response)
 
 # --- Main ---

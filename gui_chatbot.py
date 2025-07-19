@@ -304,17 +304,10 @@ class StylishChatbotGUI:
             }
             
             # System prompt
-            system_prompt = (
-                "You are a funny, witty, and natural human assistant. "
-                "Always reply in the exact same language and style as the user (Hindi, English, Hinglish, Marathi, Gujarati, Tamil, etc). "
-                "If the user mixes languages, you also mix naturally. "
-                "Never reply in English if the user uses Hindi or Hinglish. "
-                "Your answers must always match the user's language and tone, and be playful and human-like. "
-                "Sometimes add a funny emoji or witty line."
-            )
+            SYSTEM_PROMPT = "Short answers only."
             
             messages = [
-                {"role": "system", "content": system_prompt}
+                {"role": "system", "content": SYSTEM_PROMPT}
             ]
             
             for msg in self.conversation_history[-8:]:
